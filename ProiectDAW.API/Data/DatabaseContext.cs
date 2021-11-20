@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProiectDAW.CommunicationObjects.Models.UserModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,5 +14,8 @@ namespace ProiectDAW.API.Data
         }
 
         //TODO: Add Database DbSets
+        public DbSet<User> Users { get; set; }
+        public DbSet<UserDetails> UserDetails { get; set; }
+        public DbSet<Role> Roles { get; set; }
     }
 }
