@@ -79,20 +79,53 @@ namespace ProiectDAW.API.Controllers
         [HttpGet]
         [Route("[action]")]
         [Authorize]
-        public async Task<ActionResult<User>> GetUserDetails(int? id)
+        public async Task<ActionResult<User>> GetUserDetails(int id)
         {
-            User user;
-            var username = GetUsername();
-
-            if (id == null)
-                user = await _databaseContext.Users.FirstOrDefaultAsync(x => x.Username == username);
-            else user = await _databaseContext.Users.FirstOrDefaultAsync(x => x.Id == id);
-            
             if (id == 0)
                 return BadRequest();
 
+            var user = await _databaseContext.Users.FirstOrDefaultAsync(x => x.Id == id);
+            var username = GetUsername();
+
             if (username != user.Username && GetRole() != "Admin")
                 return Unauthorized();
+
+            _databaseContext.Entry(user).Reference(x => x.Role).Load();
+            _databaseContext.Entry(user).Reference(x => x.UserDetails).Load();
+
+            var role = new RoleDTO
+            {
+                RoleId = user.Role.RoleId,
+                Name = user.Role.Name
+            };
+
+            UserDetailsDTO userDetails = null;
+            if (user.UserDetails != null)
+            {
+                userDetails.Firstname = user.UserDetails.Firstname;
+                userDetails.Lastname = user.UserDetails.Lastname;
+                userDetails.Address = user.UserDetails.Address;
+                userDetails.PostalCode = user.UserDetails.PostalCode;
+            }
+
+            return Ok(new UserDTO
+            {
+                Id = user.Id,
+                Username = user.Username,
+                EmailAddress = user.EmailAddress,
+                DateOfJoing = user.DateOfJoing,
+                Role = role,
+                UserDetails = userDetails
+            });
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        [Authorize]
+        public async Task<ActionResult<User>> GetProfile()
+        {
+            var username = GetUsername();
+            var user = await _databaseContext.Users.FirstOrDefaultAsync(x => x.Username == username);
 
             _databaseContext.Entry(user).Reference(x => x.Role).Load();
             _databaseContext.Entry(user).Reference(x => x.UserDetails).Load();
