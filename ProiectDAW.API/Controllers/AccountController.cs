@@ -45,7 +45,7 @@ namespace ProiectDAW.API.Controllers
             else
             {
                 var tokenString = GenerateJSONWebToken(user);
-                response = Ok(new { token = $"Bearer {tokenString}" });
+                response = Ok(new { token = $"{tokenString}" });
             }
 
             return response;
@@ -76,13 +76,24 @@ namespace ProiectDAW.API.Controllers
         }
         #endregion
 
-        #region UserDetails
         [HttpGet]
         [Route("[action]")]
-        [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<User>> GetUserDetails(string username)
+        [Authorize]
+        public async Task<ActionResult<User>> GetUserDetails(int? id)
         {
-            var user = await _databaseContext.Users.FirstOrDefaultAsync(x => x.Username == username);
+            User user;
+            var username = GetUsername();
+
+            if (id == null)
+                user = await _databaseContext.Users.FirstOrDefaultAsync(x => x.Username == username);
+            else user = await _databaseContext.Users.FirstOrDefaultAsync(x => x.Id == id);
+            
+            if (id == 0)
+                return BadRequest();
+
+            if (username != user.Username && GetRole() != "Admin")
+                return Unauthorized();
+
             _databaseContext.Entry(user).Reference(x => x.Role).Load();
             _databaseContext.Entry(user).Reference(x => x.UserDetails).Load();
 
@@ -104,50 +115,13 @@ namespace ProiectDAW.API.Controllers
             return Ok(new UserDTO
             {
                 Id = user.Id,
-                Username = username,
+                Username = user.Username,
                 EmailAddress = user.EmailAddress,
                 DateOfJoing = user.DateOfJoing,
                 Role = role,
                 UserDetails = userDetails
             });
         }
-
-        [HttpGet]
-        [Route("[action]")]
-        [Authorize]
-        public async Task<ActionResult<User>> GetCurrentUserDetails()
-        {
-            var username = GetUsername();
-            var user = await _databaseContext.Users.FirstOrDefaultAsync(x => x.Username == username);
-            _databaseContext.Entry(user).Reference(x => x.Role).Load();
-            _databaseContext.Entry(user).Reference(x => x.UserDetails).Load();
-
-            var role = new RoleDTO
-            {
-                RoleId = user.Role.RoleId,
-                Name = user.Role.Name
-            };
-
-            UserDetailsDTO userDetails = null;
-            if (user.UserDetails != null)
-            {
-                userDetails.Firstname = user.UserDetails.Firstname;
-                userDetails.Lastname = user.UserDetails.Lastname;
-                userDetails.Address = user.UserDetails.Address;
-                userDetails.PostalCode = user.UserDetails.PostalCode;
-            }
-
-            return Ok(new UserDTO
-            {
-                Id = user.Id,
-                Username = username,
-                EmailAddress = user.EmailAddress,
-                DateOfJoing = user.DateOfJoing,
-                Role = role,
-                UserDetails = userDetails
-            });
-        } 
-        #endregion
 
         [HttpPut]
         [Route("[action]")]
