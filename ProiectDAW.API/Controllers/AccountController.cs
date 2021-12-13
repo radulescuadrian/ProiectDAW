@@ -62,6 +62,14 @@ namespace ProiectDAW.API.Controllers
                 return BadRequest("Fields cannot be null");
             }
 
+            var user = await _databaseContext.Users.FirstOrDefaultAsync(x => x.Username == register.Username);
+            if (user != null)
+                return Conflict("Username already taken");
+
+            user = await _databaseContext.Users.FirstOrDefaultAsync(x => x.EmailAddress == register.EmailAddress);
+            if (user != null)
+                return Conflict("Email already taken");
+
             await _databaseContext.Users.AddAsync(new User
             {
                 Username = register.Username,
@@ -72,7 +80,7 @@ namespace ProiectDAW.API.Controllers
             });
             await _databaseContext.SaveChangesAsync();
 
-            return Ok("User created successfully");
+            return Ok(JsonConvert.SerializeObject("User created successfully"));
         }
         #endregion
 
@@ -145,7 +153,7 @@ namespace ProiectDAW.API.Controllers
                 userDetails.PostalCode = user.UserDetails.PostalCode;
             }
 
-            return Ok(new UserDTO
+            return Ok(JsonConvert.SerializeObject(new UserDTO
             {
                 Id = user.Id,
                 Username = user.Username,
@@ -153,7 +161,7 @@ namespace ProiectDAW.API.Controllers
                 DateOfJoing = user.DateOfJoing,
                 Role = role,
                 UserDetails = userDetails
-            });
+            }));
         }
 
         [HttpPut]
@@ -161,6 +169,10 @@ namespace ProiectDAW.API.Controllers
         [Authorize]
         public async Task<IActionResult> ChangeEmail(int id, string email)
         {
+            var existingEmail = _databaseContext.Users.FirstOrDefault(x => x.EmailAddress == email);
+            if (existingEmail != null)
+                return Conflict("Email already exists");
+
             var currentUser = await _databaseContext.Users.SingleAsync(x => x.Username == GetUsername());
             if (GetRole() != "Admin" && currentUser.Id != id)
                 return Unauthorized("Cannot modify other peoples email or you are not an admin");
@@ -172,7 +184,7 @@ namespace ProiectDAW.API.Controllers
             user.EmailAddress = email;
             await _databaseContext.SaveChangesAsync();
 
-            return Ok("Email changed succesfully");
+            return Ok(JsonConvert.SerializeObject("Email changed succesfully"));
         }
 
         [HttpPut]
@@ -202,7 +214,7 @@ namespace ProiectDAW.API.Controllers
 
                 await _databaseContext.SaveChangesAsync();
 
-                return Ok("User details added succesfully");
+                return Ok(JsonConvert.SerializeObject("User details added succesfully"));
             }
 
             if (details.Firstname != null)
@@ -216,7 +228,7 @@ namespace ProiectDAW.API.Controllers
             
             await _databaseContext.SaveChangesAsync();
 
-            return Ok("User details changed succesfully");
+            return Ok(JsonConvert.SerializeObject("User details changed succesfully"));
         }
 
         #region Helper Methods
