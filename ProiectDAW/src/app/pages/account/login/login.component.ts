@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +15,8 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private authService: AuthService) { }
+    private authService: AuthService,
+    private toastr: ToastrService) { }
 
   ngOnInit(): void {
     if(localStorage.getItem('Token')){
@@ -35,11 +37,18 @@ export class LoginComponent implements OnInit {
     if (this.formGroup.invalid) {
       return;
     }
-
+    
     this.authService.login(this.formData['username'].value, this.formData['password'].value)
       .subscribe((response:any) => {
         if(response && response.token) {
+          this.toastr.clear()
+          this.toastr.success("Login successfull");
           localStorage.setItem('Token', JSON.stringify(response.token));
+          
+          let tokenData = response.token.split('.')[1]
+          let decodedTokenData = JSON.parse(window.atob(tokenData))
+          localStorage.setItem('Role', decodedTokenData["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]);
+
           this.router.navigate(['/']);
         }
       },

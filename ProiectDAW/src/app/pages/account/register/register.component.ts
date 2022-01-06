@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
@@ -15,7 +16,8 @@ export class RegisterComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private authService: AuthService) { }
+    private authService: AuthService,
+    private toastr: ToastrService) { }
 
   ngOnInit(): void {
     if(localStorage.getItem('Token')){
@@ -35,15 +37,16 @@ export class RegisterComponent implements OnInit {
     if (this.formGroup.invalid) {
       return;
     }
-
+    
     this.authService.register(this.formData['username'].value, this.formData['emailAddress'].value, this.formData['password'].value)
       .subscribe((response:any) => {
-          if(response == 'User created successfully')
+          if(response) {
+            this.toastr.clear()
+            this.toastr.success("User registered successfully");
             this.router.navigate(['/login']);
+          }
         },
         error => {
-          console.log(JSON.stringify(error.error));
-          
           this.error = error.error;
         });
   }

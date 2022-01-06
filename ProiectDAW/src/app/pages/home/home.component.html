@@ -1,0 +1,21 @@
+<mat-toolbar color="primary">
+    <button mat-flat-button color="primary" [routerLink]="''">
+        <h1>Proiect DAW</h1>
+    </button>
+    <span class="menu-spacer"></span>
+    <div>
+      <a mat-button> Products </a>
+      <a mat-button> Contact </a>
+      <a mat-button> About us </a>
+    </div>
+    <div fxFlex fxLayout fxLayoutAlign="flex-end" fxLayoutGap="10px">
+        <button *ngIf="isAdmin" mat-raised-button color="accent" (click)="admin()" fxLayoutAlign="stretch">Admin</button>
+        
+        <span style="width: 50px;"></span>
+        <button mat-raised-button color="basic" fxLayoutAlign="stretch">Profile</button>
+        <button mat-raised-button color="warn" (click)="logout()" fxLayoutAlign="stretch">Logout</button>
+    </div>
+  </mat-toolbar>
+<div fxLayoutAlign="center center" fxFlexFill class="main-div">
+    <p>CONTENT</p>
+</div>

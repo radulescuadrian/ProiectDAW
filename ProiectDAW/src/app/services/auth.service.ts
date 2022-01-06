@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -7,7 +8,9 @@ import { environment } from 'src/environments/environment';
 })
 export class AuthService {
 
-  constructor(private http:HttpClient) { }
+  constructor(
+    private router: Router,
+    private http:HttpClient) { }
 
   login(username: string, password: string) {
     return this.http.post<any>(`${environment.baseUrl}/Account/Login`, { username, password })
@@ -20,5 +23,7 @@ export class AuthService {
   logout() {
     // remove user from local storage to log user out
     localStorage.removeItem('Token');
+    localStorage.removeItem('Role');
+    this.router.navigate(['/login']);
   }
 }

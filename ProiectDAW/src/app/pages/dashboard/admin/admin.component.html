@@ -1,0 +1,29 @@
+<mat-toolbar color="primary">
+  <span>ProiectDAW</span>
+  <div fxFlex fxLayout fxLayoutAlign="flex-end" fxLayoutGap="20px">
+    <button mat-raised-button color="basic" (click)="home()" fxLayoutAlign="stretch">Home</button>
+  </div>
+</mat-toolbar>
+
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav mode='side' opened style="width: 200px;">
+    <mat-nav-list>
+      <h2 matSubheader>Products</h2>
+      <a mat-list-item href="#">Products</a>
+      <a mat-list-item href="#">Categories</a>
+      <mat-divider></mat-divider>
+
+      <h2 matSubheader>Users</h2>
+      <a mat-list-item href="#">Users</a>
+      <a mat-list-item href="#">Orders</a>
+      
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content style="padding: 20px;">
+    
+    <div fxLayoutAlign="center" fxFlexFill>
+      <p>CONTENT</p>
+    </div>
+
+  </mat-sidenav-content>
+</mat-sidenav-container>

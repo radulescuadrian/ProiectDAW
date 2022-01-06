@@ -9,19 +9,30 @@ import { AuthService } from 'src/app/services/auth.service';
 })
 export class HomeComponent implements OnInit {
 
+  isAdmin: boolean = false;
+
   constructor(
     private router: Router,
-    private authService: AuthService) { }
+    private authService: AuthService) { 
+      this.checkRole();
+    }
 
   ngOnInit(): void {
   }
 
-  profile() {
-    console.log(localStorage.getItem('Token'));
+  admin() {
+    this.router.navigate(['/admin']);
   }
 
   logout() {
     this.authService.logout();
-    this.router.navigate(['/login']);
+  }
+
+  checkRole(){
+    var role = localStorage.getItem('Role');
+    if(role == "Admin") {
+      this.isAdmin = true;
+    }
+    else this.isAdmin = false;
   }
 }
