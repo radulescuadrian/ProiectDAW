@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProiectDAW.CommunicationObjects.Models.ProductModels;
 using ProiectDAW.CommunicationObjects.Models.UserModels;
 using System;
 using System.Collections.Generic;
@@ -17,5 +18,7 @@ namespace ProiectDAW.API.Data
         public DbSet<User> Users { get; set; }
         public DbSet<UserDetails> UserDetails { get; set; }
         public DbSet<Role> Roles { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Product> Products { get; set; }
     }
 }

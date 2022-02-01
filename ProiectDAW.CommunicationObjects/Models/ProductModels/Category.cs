@@ -7,20 +7,12 @@ using System.Threading.Tasks;
 
 namespace ProiectDAW.CommunicationObjects.Models.ProductModels
 {
-    public class Product
+    public class Category
     {
         [Key]
         public int Id { get; set; }
 
         [Required]
-        public string Title { get; set; }
-
-        [Required]
-        public float Price { get; set; }
-
-        public string Description { get; set; }
-        public Category Category { get; set; }
-
-        public byte[] Image { get; set; }
+        public string Name { get; set; }
     }
 }
