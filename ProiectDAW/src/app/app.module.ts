@@ -27,6 +27,8 @@ import { MatListModule } from '@angular/material/list';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatMenuModule } from '@angular/material/menu';
 import { AdminComponent } from './pages/dashboard/admin/admin.component';
+import { ContactComponent } from './pages/home/contact/contact.component';
+import { AboutComponent } from './pages/home/about/about.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +37,8 @@ import { AdminComponent } from './pages/dashboard/admin/admin.component';
     HomeComponent,
     RegisterComponent,
     AdminComponent,
+    ContactComponent,
+    AboutComponent,
   ],
   imports: [
     BrowserModule,
